@@ -1,26 +1,23 @@
 import json
 import matplotlib.pyplot as plt
 import csv
+import numpy as np
 
 def load_parameters():
-    """Load trained parameters"""
     try:
         with open('model.json', 'r') as file:
             params = json.load(file)
             return params['theta0'], params['theta1']
     except FileNotFoundError:
-        # If no trained model is found, use theta0=0 and theta1=0
-        print("Warning: No trained model found. Using theta0=0, theta1=0.")
+        # If no trained model is found, set default values theta0=0 and theta1=0
         return 0.0, 0.0
 
 def estimate_price(mileage, theta0, theta1):
     return theta0 + (theta1 * mileage)
 
 def plot_data(mileages, prices, given_mileage, predicted_price, theta0, theta1):
-    import numpy as np
     plt.scatter(mileages, prices, color='blue', marker='o', label='Training Data')
     plt.scatter(given_mileage, predicted_price, color='red', marker='x', label='Predicted Value')
-    # 回帰直線の描画
     x_line = np.linspace(min(mileages), max(mileages), 100)
     y_line = theta0 + theta1 * x_line
     plt.plot(x_line, y_line, color='green', label='Regression Line')
@@ -31,7 +28,6 @@ def plot_data(mileages, prices, given_mileage, predicted_price, theta0, theta1):
     plt.show()
 
 def read_data(filename):
-    """Read data from CSV file"""
     mileages = []
     prices = []
     
@@ -43,25 +39,22 @@ def read_data(filename):
     return mileages, prices
 
 def main():
-    # Load trained parameters
     theta0, theta1 = load_parameters()
     mileages, prices = read_data('data.csv')
     
     print("=== Car Price Prediction Program ===")
     print("Enter mileage to predict price.")
-    print("To quit, enter 'quit'.")
-    print()
+    print("To quit, enter 'quit'.\n")
     
     while True:
         try:
             user_input = input("Enter mileage (km): ")
             
-            # End condition
+            # Finish condition
             if user_input.lower() == 'quit':
                 print("Program terminated.")
                 break
             
-            # Number conversion
             mileage = float(user_input)
             
             # Negative value check
@@ -72,11 +65,10 @@ def main():
             # Price prediction
             predicted_price = estimate_price(mileage, theta0, theta1)
             
-            # Result display
-            print(f"Predicted price: {predicted_price:.2f}")
-            print()
+            # Display result
+            print(f"Predicted price: {predicted_price:.2f}\n")
 
-            # Plot data (regression line also displayed)
+            # Plot data
             plot_data(mileages, prices, mileage, predicted_price, theta0, theta1)
             
         except ValueError:
